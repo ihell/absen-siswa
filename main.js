@@ -10,7 +10,6 @@ import {
   orderBy
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyB8g6kCR8laDnH1YCF9cYVy10lF1y7s2i0",
   authDomain: "bakwan-jagung.firebaseapp.com",
@@ -21,7 +20,6 @@ const firebaseConfig = {
   measurementId: "G-VBHD7G08PJ"
 };
 
-// Inisialisasi Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -37,17 +35,24 @@ export async function ambilDaftarAbsensi() {
       nama: dok.data().nama,
       kelamin: dok.data().kelamin,
       kelas: dok.data().kelas,
-      keterangan: dok.data().keterangan
+      keterangan: dok.data().keterangan,
+      tanggal: dok.data().tanggal || ""
     });
   });
 
   return hasil;
 }
 
-export async function ubahStatusAbsensi(docId, keterangan) {
-  await updateDoc(doc(db, "absen", docId), {
-    keterangan: keterangan
-  });
+export async function ubahStatusAbsensi(docId, keterangan, tanggal) {
+  try {
+    await updateDoc(doc(db, "absen", docId), {
+      keterangan: keterangan,
+      tanggal: tanggal
+    });
+    console.log('Status absensi berhasil diubah.');
+  } catch (error) {
+    console.error('Gagal mengubah status absensi: ', error);
+  }
 }
 
 export async function tambahAbsensi(nama, kelamin, kelas) {
@@ -56,10 +61,12 @@ export async function tambahAbsensi(nama, kelamin, kelas) {
       nama: nama,
       kelamin: kelamin,
       kelas: kelas,
-      keterangan: ''
+      keterangan: '',
+      tanggal: ''
     });
-    console.log('Berhasil menambah ' + dokRef.id);
-  } catch (e) {
-    console.log('Gagal menambah ' + e);
+    console.log('Berhasil menambah dokumen dengan ID: ', dokRef.id);
+  } catch (error) {
+    console.error('Gagal menambah dokumen: ', error);
   }
 }
+

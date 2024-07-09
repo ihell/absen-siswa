@@ -42,6 +42,7 @@
         <th scope="col">Nama</th>
         <th scope="col">Kelamin</th>
         <th scope="col">Kelas</th>
+        <th scope="col">Tanggal</th>
         <th scope="col">Tombol</th>
       </tr>
     </thead>
@@ -97,6 +98,7 @@
           '<td>' + data.nama + '</td>' +
           '<td>' + data.kelamin + '</td>' +
           '<td>' + data.kelas + '</td>' +
+          '<td id="tanggal-' + data.id + '">' + data.tanggal + '</td>' +
           '<td class="stack-up">' +
           '<button class="btn btn-success tombol-hadir" data="' + data.id + '">Hadir</button>' +
           '<button class="btn btn-danger tombol-tidak-hadir" data="' + data.id + '">Tidak Hadir</button>' +
@@ -108,14 +110,16 @@
 
       $('.tombol-hadir').click(async function() {
         let id = $(this).attr('data');
-        await ubahStatusAbsensi(id, 'Hadir');
-        $('#keterangan-' + id).text('Hadir');
+        let tanggal = new Date().toLocaleDateString();
+        await ubahStatusAbsensi(id, 'Hadir', tanggal);
+        $('#tanggal-' + id).text(tanggal);
       });
 
       $('.tombol-tidak-hadir').click(async function() {
         let id = $(this).attr('data');
-        await ubahStatusAbsensi(id, 'Tidak Hadir');
-        $('#keterangan-' + id).text('Tidak Hadir');
+        let tanggal = new Date().toLocaleDateString();
+        await ubahStatusAbsensi(id, 'Tidak Hadir', tanggal);
+        $('#tanggal-' + id).text(tanggal);
       });
 
       $('#loader').hide();
