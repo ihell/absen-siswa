@@ -10,19 +10,23 @@ import {
   orderBy
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyB8g6kCR8laDnH1YCF9cYVy10lF1y7s2i0",
-  authDomain: "bakwan-jagung.firebaseapp.com",
-  projectId: "bakwan-jagung",
-  storageBucket: "bakwan-jagung.appspot.com",
-  messagingSenderId: "710653450064",
-  appId: "1:710653450064:web:5cbf9ff4240922b03ffe55",
-  measurementId: "G-VBHD7G08PJ"
-};
+// Fungsi untuk mendapatkan konfigurasi Firebase dari server backend
+async function getFirebaseConfig() {
+  const response = await fetch('http://localhost:3000/firebase-config');
+  return response.json();
+}
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Inisialisasi Firebase dengan konfigurasi yang didapatkan dari backend
+async function initializeFirebase() {
+  const firebaseConfig = await getFirebaseConfig();
+  const app = initializeApp(firebaseConfig);
+  return getFirestore(app);
+}
 
+// Menjalankan fungsi inisialisasi Firebase dan menyimpan referensi Firestore
+const db = await initializeFirebase();
+
+// Fungsi untuk mengambil daftar absensi
 export async function ambilDaftarAbsensi() {
   const refDokumen = collection(db, "absen");
   const kueri = query(refDokumen, orderBy("nama"));
@@ -43,6 +47,7 @@ export async function ambilDaftarAbsensi() {
   return hasil;
 }
 
+// Fungsi untuk mengubah status absensi
 export async function ubahStatusAbsensi(docId, keterangan, tanggal) {
   try {
     await updateDoc(doc(db, "absen", docId), {
@@ -55,6 +60,7 @@ export async function ubahStatusAbsensi(docId, keterangan, tanggal) {
   }
 }
 
+// Fungsi untuk menambah absensi baru
 export async function tambahAbsensi(nama, kelamin, kelas) {
   try {
     const dokRef = await addDoc(collection(db, 'absen'), {
@@ -69,4 +75,3 @@ export async function tambahAbsensi(nama, kelamin, kelas) {
     console.error('Gagal menambah dokumen: ', error);
   }
 }
-
